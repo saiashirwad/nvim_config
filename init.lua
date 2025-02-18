@@ -290,8 +290,6 @@ require('lazy').setup({
 
         ocamllsp = {},
 
-        hls = {},
-
         lua_ls = {
 
           settings = {
