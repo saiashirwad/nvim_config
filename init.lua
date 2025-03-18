@@ -8,8 +8,6 @@ vim.opt.hlsearch = false
 vim.opt.ignorecase = true
 vim.opt.inccommand = 'split'
 vim.opt.mouse = 'a'
--- vim.opt.number = true
--- vim.opt.relativenumber = true
 vim.opt.shiftwidth = 2
 vim.opt.title = true
 vim.opt.showmode = false
@@ -29,9 +27,7 @@ vim.opt.laststatus = 0
 vim.opt.mouse = 'a'
 vim.opt.showmode = false
 vim.opt.cmdheight = 0
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+vim.opt.clipboard = 'unnamedplus'
 vim.opt.timeoutlen = 300
 vim.opt.list = false
 
