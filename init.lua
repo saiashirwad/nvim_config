@@ -28,6 +28,7 @@ vim.opt.wrap = false
 vim.opt.laststatus = 0
 vim.opt.mouse = 'a'
 vim.opt.showmode = false
+vim.opt.cmdheight = 0
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
@@ -106,11 +107,6 @@ require('lazy').setup({
   },
 
   {
-    'lewis6991/gitsigns.nvim',
-    opts = {},
-  },
-
-  {
     'marilari88/twoslash-queries.nvim',
     config = function()
       require('twoslash-queries').setup {
@@ -181,16 +177,6 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
-
-  -- {
-  --   'pmizio/typescript-tools.nvim',
-  --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
-  --   opts = {
-  --     on_attach = function(client, bufnr)
-  --       require('twoslash-queries').attach(client, bufnr)
-  --     end,
-  --   },
-  -- },
 
   {
 
@@ -462,15 +448,76 @@ require('lazy').setup({
   -- },
 
   {
-    'navarasu/onedark.nvim',
+    'f4z3r/gruvbox-material.nvim',
+    name = 'gruvbox-material',
+    lazy = false,
     priority = 1000,
     opts = {
-      style = 'cool', -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'
+      italics = false, -- enable italics in general
+      contrast = 'hard', -- set contrast, can be any of "hard", "medium", "soft"
+      float = {
+        force_background = true, -- force background on floats even when background.transparent is set
+        background_color = nil, -- set color for float backgrounds. If nil, uses the default color set
+        -- by the color scheme
+      },
+      signs = {
+        highlight = true, -- whether to highlight signs
+      },
+      customize = nil, -- customize the theme in any way you desire, see below what this
+      -- configuration accepts
     },
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
   },
+
+  -- {
+  --   'loctvl842/monokai-pro.nvim',
+  --   priority = 1000,
+  --   opts = {
+  --     styles = {
+  --       comment = { italic = false },
+  --       keyword = { italic = false }, -- any other keyword
+  --       type = { italic = false }, -- (preferred) int, long, char, etc
+  --       storageclass = { italic = false }, -- static, register, volatile, etc
+  --       structure = { italic = false }, -- struct, union, enum, etc
+  --       parameter = { italic = false }, -- parameter pass in function
+  --       annotation = { italic = false },
+  --       tag_attribute = { italic = false }, -- attribute of tag in reactjs
+  --     },
+  --     filter = 'pro', -- classic | octagon | pro | machine | ristretto | spectrum
+  --   },
+  --   config = function()
+  --     -- require('monokai-pro').setup()
+  --     vim.cmd.colorscheme 'monokai-pro'
+  --   end,
+  -- },
+
+  -- {
+  --
+  --
+  --
+  --   'rose-pine/neovim',
+  --   priority = 1000,
+  --   opts = {
+  --     styles = {
+  --       bold = false,
+  --       italic = false,
+  --       transparency = false,
+  --     },
+  --   },
+  --   config = function()
+  --     vim.cmd.colorscheme 'rose-pine'
+  --   end,
+  -- },
+
+  -- {
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   opts = {
+  --     style = 'cool', -- Default theme style. Choose between 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer' and 'light'
+  --   },
+  --   config = function()
+  --     vim.cmd.colorscheme 'onedark'
+  --   end,
+  -- },
 
   -- {
   --   'nvim-lualine/lualine.nvim',
@@ -480,6 +527,7 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
+    priority = 1000,
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
 
@@ -692,3 +740,13 @@ end
 vim.api.nvim_create_user_command('CopyErrors', function()
   copy_errors_to_clipboard()
 end, {})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    -- Disable semantic tokens for the attached LSP client
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client then
+      client.server_capabilities.semanticTokensProvider = nil
+    end
+  end,
+})
