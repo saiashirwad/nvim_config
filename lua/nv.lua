@@ -254,7 +254,16 @@ end
 ---@return BufferNumber
 function M.buf_new(opts)
   opts = opts or {}
-  local bufnr = api.nvim_create_buf(opts.listed or false, opts.scratch or false)
+  local listed = opts.listed
+  if listed == nil then
+    listed = false
+  end
+  local scratch = opts.scratch
+  if scratch == nil then
+    scratch = false
+  end
+
+  local bufnr = api.nvim_create_buf(listed, scratch)
 
   -- Set name if provided
   if opts.name then
@@ -2189,7 +2198,7 @@ function M.throttle(func, timeout)
   local timer = nil
   local last_exec = 0
   return function(...)
-    local current_time = vim.loop.now()
+    local current_time = vim.loop.hrtime() / 1000000 -- Convert to milliseconds
     local args = { ... }
     if current_time - last_exec >= timeout then
       func(unpack(args))
@@ -2201,7 +2210,7 @@ function M.throttle(func, timeout)
         0,
         vim.schedule_wrap(function()
           func(unpack(args))
-          last_exec = vim.loop.now()
+          last_exec = vim.loop.hrtime() / 1000000 -- Convert to milliseconds
           timer:close()
           timer = nil
         end)
@@ -3160,25 +3169,22 @@ end
 ---@param bufnr? BufferNumber Buffer to enable hints for (default: current buffer)
 function lsp.enable_inlay_hints(bufnr)
   bufnr = bufnr or M.buf()
-
-  vim.lsp.inlay_hint.enable(bufnr, true)
+  vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 end
 
 ---Disable inlay hints
 ---@param bufnr? BufferNumber Buffer to disable hints for (default: current buffer)
 function lsp.disable_inlay_hints(bufnr)
   bufnr = bufnr or M.buf()
-
-  vim.lsp.inlay_hint.enable(bufnr, false)
+  vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
 end
 
 ---Toggle inlay hints
 ---@param bufnr? BufferNumber Buffer to toggle hints for (default: current buffer)
 function lsp.toggle_inlay_hints(bufnr)
   bufnr = bufnr or M.buf()
-
-  local current = vim.lsp.inlay_hint.is_enabled(bufnr)
-  vim.lsp.inlay_hint.enable(bufnr, not current)
+  local current = vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }
+  vim.lsp.inlay_hint.enable(not current, { bufnr = bufnr })
 end
 
 -- Configuration
@@ -3711,13 +3717,13 @@ function diagnostics.setup_highlights(namespace)
     underline = true,
     virtual_text = {
       prefix = '●',
-      source = 'if_many',
+      source = true, -- Changed from "always" to true
     },
     signs = true,
     severity_sort = true,
     float = {
       border = 'rounded',
-      source = 'always',
+      source = 'if_many',
       header = '',
       prefix = '',
     },
