@@ -723,8 +723,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
   end,
 })
-
--- Create a format command
-nv.create_command('Format', function()
-  vim.lsp.buf.format()
-end)
