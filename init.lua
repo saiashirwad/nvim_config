@@ -6,6 +6,8 @@ nv.set_var('have_nerd_font', true)
 
 nv.set_opts {
   breakindent = true,
+  number = true,
+  relativenumber = true,
   cursorline = true,
   expandtab = true,
   hlsearch = false,
@@ -27,7 +29,7 @@ nv.set_opts {
   undofile = true,
   updatetime = 250,
   wrap = false,
-  laststatus = 0,
+  laststatus = 1,
   cmdheight = 0,
   clipboard = 'unnamedplus',
   list = false,
@@ -108,15 +110,23 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   'tpope/vim-sleuth',
 
-  {
-    'scratch',
-    dir = '~/.config/nvim/lua',
-    opts = {},
-    config = function()
-      require('scratch').setup {}
-      nv.nmap('<leader>so', ':OpenScratch<CR>')
-    end,
-  },
+  -- {
+  --   'nvim-lualine/lualine.nvim',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
+  --   opts = {},
+  -- },
+
+  { 'echasnovski/mini.starter', version = false, opts = {} },
+
+  -- {
+  --   'scratch',
+  --   dir = '~/.config/nvim/lua',
+  --   opts = {},
+  --   config = function()
+  --     require('scratch').setup {}
+  --     nv.nmap('<leader>so', ':OpenScratch<CR>')
+  --   end,
+  -- },
 
   {
     'supermaven-inc/supermaven-nvim',
@@ -313,9 +323,9 @@ require('lazy').setup({
             autoUseWorkspaceTsdk = true,
             experimental = {
               maxInlayHintLength = 30,
-              completion = {
-                enableServerSideFuzzyMatch = true,
-              },
+              -- completion = {
+              --   enableServerSideFuzzyMatch = true,
+              -- },
             },
           },
           typescript = {
@@ -703,16 +713,13 @@ nv.map('n', '<leader>bt', function()
   end
 end)
 
-local function copy_errors_to_clipboard()
+nv.create_command('CopyErrors', function()
   nv.diag.copy_to_clipboard {
     title = 'Errors from ' .. vim.fn.bufname(nv.buf()),
     empty_message = 'No errors found.',
     format = '[%d:%d] [%s] %s', -- [LINE:COL] [SEVERITY] Message
   }
-end
-
--- Register the command
-nv.create_command('CopyErrors', copy_errors_to_clipboard)
+end)
 
 -- Disable semantic tokens for LSP clients on attach
 vim.api.nvim_create_autocmd('LspAttach', {
