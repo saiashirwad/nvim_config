@@ -118,15 +118,10 @@ require('lazy').setup({
 
   { 'echasnovski/mini.starter', version = false, opts = {} },
 
-  -- {
-  --   'scratch',
-  --   dir = '~/.config/nvim/lua',
-  --   opts = {},
-  --   config = function()
-  --     require('scratch').setup {}
-  --     nv.nmap('<leader>so', ':OpenScratch<CR>')
-  --   end,
-  -- },
+  {
+    'f-person/auto-dark-mode.nvim',
+    opts = {},
+  },
 
   {
     'supermaven-inc/supermaven-nvim',
